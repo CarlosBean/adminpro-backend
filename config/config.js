@@ -1,0 +1,1 @@
+module.exports.SEED = '@-1@-p310t4!';

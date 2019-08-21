@@ -7,6 +7,10 @@ const mongoose = require('mongoose');
 const appRoute = require('./routes/app');
 const userRoute = require('./routes/user');
 const loginRoute = require('./routes/login');
+const hospitalRoute = require('./routes/hospital');
+const doctorRoute = require('./routes/doctor');
+const searchRoute = require('./routes/search');
+const uploadRoute = require('./routes/upload');
 
 // initialize variables
 const app = express();
@@ -21,6 +25,10 @@ mongoose.connect(`mongodb://localhost:27017/${DB}`, { useNewUrlParser: true },
     });
 
 //routes
+app.use('/upload', uploadRoute);
+app.use('/search', searchRoute);
+app.use('/doctor', doctorRoute);
+app.use('/hospital', hospitalRoute);
 app.use('/login', loginRoute);
 app.use('/user', userRoute);
 app.use('/', appRoute);

@@ -27,7 +27,7 @@ app.get('/', (req, res) => {
                 });
             }
 
-            Doctor.count({}, (err, total) => {
+            Doctor.countDocuments({}, (err, total) => {
                 res.status(200).json({
                     success: true,
                     message: 'successful doctors',

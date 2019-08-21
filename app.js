@@ -11,6 +11,7 @@ const hospitalRoute = require('./routes/hospital');
 const doctorRoute = require('./routes/doctor');
 const searchRoute = require('./routes/search');
 const uploadRoute = require('./routes/upload');
+const imageRoute = require('./routes/images');
 
 // initialize variables
 const app = express();
@@ -25,6 +26,7 @@ mongoose.connect(`mongodb://localhost:27017/${DB}`, { useNewUrlParser: true },
     });
 
 //routes
+app.use('/img', imageRoute);
 app.use('/upload', uploadRoute);
 app.use('/search', searchRoute);
 app.use('/doctor', doctorRoute);

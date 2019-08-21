@@ -11,8 +11,13 @@ app.use(bodyParser.json());
 
 // get all users
 app.get('/', (req, res, next) => {
-    User
-        .find({}, 'name email img role')
+
+    let from = req.query.from || 0;
+    from = Number(from);
+
+    User.find({})
+        .skip(from)
+        .limit(5)
         .exec((err, users) => {
             if (err) {
                 return res.status(500).json({
@@ -21,11 +26,15 @@ app.get('/', (req, res, next) => {
                 });
             }
 
-            res.status(200).json({
-                success: true,
-                message: 'successful users',
-                data: users
+            User.count({}, (err, total) => {
+                res.status(200).json({
+                    success: true,
+                    message: 'successful users',
+                    data: users,
+                    total
+                });
             });
+
         });
 })
 

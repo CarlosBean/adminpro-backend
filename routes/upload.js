@@ -16,7 +16,7 @@ const models = {
 
 app.use(fileUpload());
 
-app.put('/:collection/:id', auth.verifyToken, (req, res, next) => {
+app.put('/:collection/:id', (req, res, next) => {
 
     const collection = req.params.collection;
     const documentRef = collection.slice(0, -1);

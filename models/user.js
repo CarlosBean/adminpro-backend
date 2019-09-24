@@ -19,6 +19,6 @@ const userSchema = new Schema({
 });
 
 userSchema.plugin(uniqueValidator, { message: '{PATH} must be unique' });
-userSchema.plugin(mongooseHidden, { hidden: { _id: false, password: true, role: true } });
+userSchema.plugin(mongooseHidden, { hidden: { _id: false, password: true } });
 
 module.exports = moongoose.model('user', userSchema);

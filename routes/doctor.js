@@ -38,6 +38,37 @@ app.get('/', (req, res) => {
         });
 });
 
+app.get('/:id', (req, res) => {
+    const id = req.params.id;
+
+    Doctor.findById(id)
+        .populate('user')
+        .populate('hospital')
+        .exec((err, foundDoctor) => {
+            if (err) {
+                return res.status(500).json({
+                    success: false,
+                    message: 'error search doctor',
+                    errors: err
+                });
+            }
+
+            if (!foundDoctor) {
+                return res.status(400).json({
+                    success: false,
+                    message: `doctor with id ${id} is not exist`,
+                    errors: { message: 'doctor not exist' }
+                });
+            }
+
+            res.status(200).json({
+                success: true,
+                message: 'successful doctor',
+                data: foundDoctor
+            });
+        })
+});
+
 // create a doctor
 app.post('/', auth.verifyToken, (req, res) => {
     const body = req.body;

@@ -37,6 +37,34 @@ app.get('/', (req, res) => {
         });
 });
 
+app.get('/:id', (req, res) => {
+    const id = req.params.id;
+
+    Hospital.findById(id, (err, foundHospital) => {
+        if (err) {
+            return res.status(500).json({
+                success: false,
+                message: 'error search hospital',
+                errors: err
+            });
+        }
+
+        if (!foundHospital) {
+            return res.status(400).json({
+                success: false,
+                message: `hospital with id ${id} is not exist`,
+                errors: { message: 'hospital not exist' }
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            message: 'successful hospital',
+            data: foundHospital
+        });
+    })
+});
+
 // create hospital
 app.post('/', auth.verifyToken, (req, res) => {
     const body = req.body;

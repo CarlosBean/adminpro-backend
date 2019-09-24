@@ -6,6 +6,9 @@ const auth = require('../middleware/auth');
 
 const app = express();
 
+const jwt = require('jsonwebtoken');
+const SEED = require('../config/config').SEED;
+
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
@@ -39,7 +42,7 @@ app.get('/', (req, res, next) => {
 })
 
 // create user
-app.post('/', auth.verifyToken, (req, res) => {
+app.post('/', (req, res) => {
     const body = req.body;
 
     const user = new User({
@@ -68,7 +71,7 @@ app.post('/', auth.verifyToken, (req, res) => {
 });
 
 // update user
-app.put('/:id', auth.verifyToken, (req, res) => {
+app.put('/:id', [auth.verifyToken, auth.verifyAdmin_or_sameUser], (req, res) => {
     const id = req.params.id;
     const body = req.body;
 
@@ -90,7 +93,7 @@ app.put('/:id', auth.verifyToken, (req, res) => {
 
         foundUser.name = body.name;
         foundUser.email = body.email;
-        foundUser.role = body.role;
+        foundUser.role = body.role || foundUser.role;
 
         foundUser.save((err, savedUser) => {
             if (err) {
@@ -101,17 +104,18 @@ app.put('/:id', auth.verifyToken, (req, res) => {
                 });
             }
 
+            const token = jwt.sign({ user: savedUser }, SEED, { expiresIn: 14400 });
             res.status(200).json({
                 success: true,
                 message: 'successful update',
-                data: savedUser
+                data: { token }
             });
         })
     });
 });
 
 
-app.delete('/:id', auth.verifyToken, (req, res) => {
+app.delete('/:id', [auth.verifyToken, auth.verifyAdmin], (req, res) => {
     const id = req.params.id;
 
     User.findByIdAndRemove(id, (err, deletedUser) => {

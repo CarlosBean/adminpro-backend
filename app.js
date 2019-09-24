@@ -17,6 +17,15 @@ const imageRoute = require('./routes/images');
 const app = express();
 const DB = 'hospitalDB';
 
+
+// CORS
+app.use(function (req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+    res.header("Access-Control-Allow-Methods", "POST, GET, PUT, DELETE, OPTIONS");
+    next();
+});
+
 // connection to DB
 mongoose.set('useCreateIndex', true);
 mongoose.connect(`mongodb://localhost:27017/${DB}`, { useNewUrlParser: true },

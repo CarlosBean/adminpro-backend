@@ -5,6 +5,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const SEED = require('../config/config').SEED;
 const CLIENT_ID = require('../config/config').CLIENT_ID;
+const auth = require('../middleware/auth');
 
 const { OAuth2Client } = require('google-auth-library');
 const client = new OAuth2Client(CLIENT_ID);
@@ -13,6 +14,16 @@ const app = express();
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+
+// renew token 
+app.get('/newtoken', auth.verifyToken, (req, res) => {
+    const token = jwt.sign({ user: req.currentUser }, SEED, { expiresIn: 14400 });
+    res.status(200).json({
+        success: true,
+        message: 'token has been refreshed',
+        data: { id: req.currentUser._id, token }
+    });
+});
 
 // google authentication
 async function verify(token) {
@@ -118,7 +129,7 @@ app.post('/', (req, res, next) => {
         if (!foundUser || !body.password) {
             return res.status(400).json({
                 success: false,
-                message: 'invalid credentials',
+                message: 'login error',
                 errors: { message: 'invalid credentials' }
             });
         }
@@ -126,7 +137,7 @@ app.post('/', (req, res, next) => {
         if (!bcrypt.compareSync(body.password, foundUser.password)) {
             return res.status(400).json({
                 success: false,
-                message: 'invalid credentials',
+                message: 'login error',
                 errors: { message: 'invalid credentials' }
             });
         }

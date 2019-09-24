@@ -51,10 +51,11 @@ app.get('/all/:search', (req, res) => {
     ];
 
     Promise.all(promises).then(results => {
+        const [doctors, hospitals, users] = results;
         res.status(200).json({
             success: true,
             message: 'successful search',
-            data: results
+            data: { doctors, hospitals, users }
         });
     }).catch(err => {
         res.status(500).json({
@@ -69,7 +70,7 @@ function searchByTable(table, regex) {
         collections[table].model.find({ name: regex })
             .populate(collections[table].populate)
             .exec((err, results) => {
-                err ? reject(`error searching on ${table}`, err) : resolve({ [table]: results });
+                err ? reject(`error searching on ${table}`, err) : resolve(results);
             });
     });
 }
